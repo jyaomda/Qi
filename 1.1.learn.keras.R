@@ -1,18 +1,19 @@
+##### https://www.datacamp.com/community/tutorials/keras-r-deep-learning #####
+
 install.packages("keras")
+library(keras)
+install_keras() 
+
 install.packages("corrplot")
 library(corrplot)
-library(keras)
-install_keras()
 
-##### https://www.datacamp.com/community/tutorials/keras-r-deep-learning #####
-#### https://github.com/rstudio/keras/blob/master/R/optimizers.R ####
-
-### read in CSV file ###
+### read example CSV file ###
 f = url("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")
 iris <- read.csv(f, header = F, as.is = T) 
 names(iris) <- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width", "Species")
 iris$Species = as.factor(iris$Species)
 
+### view data ###
 plot(iris$Petal.Length, 
      iris$Petal.Width, 
      pch=21, bg=c("red","green3","blue")[unclass(iris$Species)], 
@@ -35,6 +36,7 @@ iris_norm <- as.data.frame(lapply(iris[1:4], menorm))
 iris[,5] <- as.numeric(iris[,5]) -1
 iris <- as.matrix(iris)
 dimnames(iris) <- NULL
+
 iris_korm <- normalize(iris[,1:4])
 dim(iris_norm); dim(iris_korm)
 
@@ -48,6 +50,7 @@ set.seed(1433)
 ind <- sample(2, nrow(iris), replace=TRUE, prob=c(0.67, 0.33))
 iris.training <- iris[ind==1, 1:4]
 iris.test <- iris[ind==2, 1:4]
+
 # prepare labels using ONE HOT Encode
 iris.trainingtarget <- iris[ind==1, 5]
 iris.testtarget <- iris[ind==2, 5]
@@ -60,7 +63,6 @@ print(iris.testLabels)
 model <- keras_model_sequential() 
 model %>% 
   layer_dense(units = 16, activation = 'relu', input_shape = c(4)) %>% 
-  layer_dense(units = 10, activation = 'relu') %>%
   layer_dense(units = 7, activation = 'relu') %>%
   layer_dense(units = 4, activation = 'relu') %>%
   layer_dense(units = 3, activation = 'softmax')
@@ -73,16 +75,16 @@ model %>% compile(
 )
 
 # OR, define an optimizer
-sgd <- optimizer_sgd(lr = 0.01)
-model %>% compile(optimizer=sgd, 
-                  loss='categorical_crossentropy', 
-                  metrics='accuracy')
+#sgd <- optimizer_sgd(lr = 0.01)
+#model %>% compile(optimizer=sgd, 
+#                  loss='categorical_crossentropy', 
+#                  metrics='accuracy')
 
 # OR, more optimizer
-opt = optimizer_rmsprop(lr = 0.001, rho = 0.9, epsilon = NULL, decay = 0.0)
-model %>% compile(optimizer=opt, 
-                  loss='categorical_crossentropy', 
-                  metrics='accuracy')
+#opt = optimizer_rmsprop(lr = 0.001, rho = 0.9, epsilon = NULL, decay = 0.0)
+#model %>% compile(optimizer=opt, 
+#                  loss='categorical_crossentropy', 
+#                  metrics='accuracy')
 
 # Fit the model 
 model %>% fit(
