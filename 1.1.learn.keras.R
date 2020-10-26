@@ -7,13 +7,14 @@ install_keras()
 install.packages("corrplot")
 library(corrplot)
 
-### read example CSV file ###
+### read example CSV file ### iris data
 f = url("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")
 iris <- read.csv(f, header = F, as.is = T) 
 names(iris) <- c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width", "Species")
 iris$Species = as.factor(iris$Species)
 
-### view data ###
+### view data ### basically, the challenge is to separate green from blue
+## since red can be easily removed from others
 plot(iris$Petal.Length, 
      iris$Petal.Width, 
      pch=21, bg=c("red","green3","blue")[unclass(iris$Species)], 
@@ -22,7 +23,7 @@ plot(iris$Petal.Length,
 
 corrplot(cor(iris[,1:4]),'square')
 
-### normalization or not ###
+### normalization or not ### not required
 menorm <- function(x) {
   num <- x - min(x)
   denom <- max(x) - min(x)
@@ -40,7 +41,7 @@ dimnames(iris) <- NULL
 iris_korm <- normalize(iris[,1:4])
 dim(iris_norm); dim(iris_korm)
 
-# compare normalization
+# compare normalization # keras result very different
 head(iris_norm)
 head(iris_korm)
 cor(iris[,1],iris_korm[,1])
